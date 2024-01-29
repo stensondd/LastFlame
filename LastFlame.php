@@ -5,24 +5,31 @@ session_start();
 ?>
 <style>
 .dotBig {
-    height: 400px;
-    width: 400px;
-    margin-top: -200px;
-    margin-left: -200px;
+    height: 900px;
+    width: 900px;
+    margin-top: -450px;
+    margin-left: -450px;
     border-radius: 50%;
     display: inline-block;
-    background-image: radial-gradient(rgba(255,255,135,1) 10%, rgba(255,255,235,0) 60%, rgba(0,0,0,0) 20%);
+    text-align: center;
+    vertical-align: middle;
+    /*background-image: url("img/fire-effect.gif");
+    background-size: 19.2px 10.8px;
+    background-repeat: no-repeat;
+    background-position: 50% 50%;
+    /*margin-top: 10px;
+    /*background-image: radial-gradient(rgba(255,255,135,1) 10%, rgba(255,255,235,0) 60%, rgba(0,0,0,0) 20%);*/
 }
 .dot {
     position: absolute;
-    height: 150px;
-    width: 150px;
-    margin-top: -75px;
-    margin-left: -75px;
+    height: 80px;
+    width: 80px;
+    margin-top: -40px;
+    margin-left: -40px;
     border-radius: 50%;
     display: inline-block;
-    
-    background-image: radial-gradient(rgba(255,255,135,1) 10%, rgba(255,255,235,0) 60%, rgba(0,0,0,0) 20%);
+    /*background-image: radial-gradient(rgba(255,255,135,1) 10%, rgba(255,255,235,0) 60%, rgba(0,0,0,0) 20%);*/
+    background-color: rgba(0,0,0,0);
 }
 .dotMed {
     position: absolute;
@@ -39,19 +46,81 @@ session_start();
 }
 .node {
     position: absolute;
-    height: 50px;
-    width: 50px;
-    margin-top: -28px;
-    margin-left: -28px;
+    height: 60px;
+    width: 60px;
+    margin-top: -33px;
+    margin-left: -33px;
     border-radius: 50%;
-    border: 3px solid rgb(201,201,201);
+    border: 3px solid rgba(200,160,36,100); 
     display: inline-block;
-    background-color: rgba(255,255,255,.4);
+    background-color: rgba(0,0,0,.4);
 }
 .glow {
     -webkit-box-shadow:0 0 50px white; 
     -moz-box-shadow: 0 0 50px white; 
     box-shadow:0 0 50px white;
+}
+.stat {
+    position: absolute;
+    height: 50px;
+    width: 50px;
+    margin-top: -25px;
+    margin-left: -25px;
+    line-height: 50px;
+    border-radius: 50%; 
+    color: lightgray;
+    text-align: center;
+
+    vertical-align: middle;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-decoration: none;
+}
+.stat:hover {
+    cursor: pointer;
+}
+.option{
+    cursor: pointer;
+    border-radius: 50%;
+}
+.optionClose{
+    height:0px;
+    width:0px;
+    margin-top: -10px;
+    margin-left: -10px;
+    border: 10px solid rgba(255,255,255,0);
+    transition: 0.5s linear
+}
+.optionExpand{
+    height:80px;
+    width:80px;
+    margin-top: -50px;
+    margin-left: -50px;
+    border: 10px solid rgba(200,160,36,100);
+    /*box-shadow:0 0 0 2px,
+    inset 0 0 0 2px;*/
+    transition: 0.5s linear
+}
+.smoke {
+    background-repeat: no-repeat;
+    background-position: center;
+}
+#fog{
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;
+}
+#flame{
+    top: 50%;
+    left: 50%;
+    position: absolute;
+    border-radius: 50%;
 }
 </style>
 <html>
@@ -63,11 +132,21 @@ session_start();
 </script>
 <html>
 <body style='margin:0px'>
-    <div id="night" style='width:100%; height:100%; background-color: #002;'>
-    <canvas id="canvas" style="margin:0; height:100%; width:100%"></canvas>
-        <div class='dotBig' style='position:absolute; top: 50%;
-                    left: 50%;
-                    '></div>
+    <div id="night" style='width:100%; height:100%; background-color: #000;'>
+    <video autoplay muted loop id="fog">
+    <source src="img/spark-smoke.mp4" type="video/mp4">
+    </video>
+    <canvas id="canvas" class='smoke' style="margin:0; height:100%; width:100%"></canvas>
+        <div class='dotBig' style='position:absolute; top: 50%; left: 50%;'>
+            <video autoplay muted loop id="flame">
+            <source src="img/fire-effect.mp4" type="video/mp4">
+            </video>
+            <div class='dot' style='position:absolute; top: 50%; left: 50%;'>
+                <div id='option0' class='option optionClose' style='position:absolute; top: 50%; left: 50%;'>
+                    <h1 id='stat0' class='stat' style='position:absolute; top: 50%; left: 50%;'>200</h1>
+                </div>
+            </div>
+        </div>
     </div>    
 </body>
 </html>
