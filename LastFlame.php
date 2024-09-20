@@ -1,8 +1,3 @@
-<?php
-session_start();
-//include "../TalentTree/loginScreen.php";
-//buildScreen();
-?>
 <style>
 .dotBig {
     height: 900px;
@@ -55,6 +50,17 @@ session_start();
     display: inline-block;
     background-color: rgba(0,0,0,.4);
 }
+.nodeCircle {
+    position: absolute;
+    height: 60px;
+    width: 60px;
+    margin-top: -33px;
+    margin-left: -33px;
+    border-radius: 50%;
+    border: 3px solid rgba(200,160,36,100); 
+    display: inline-block;
+    background-color: rgba(0,0,0,.4);
+}
 .glow {
     -webkit-box-shadow:0 0 50px white; 
     -moz-box-shadow: 0 0 50px white; 
@@ -81,6 +87,29 @@ session_start();
     text-decoration: none;
 }
 .stat:hover {
+    cursor: pointer;
+}
+.statBlack {
+    position: absolute;
+    height: 50px;
+    width: 50px;
+    margin-top: -25px;
+    margin-left: -25px;
+    line-height: 50px;
+    border-radius: 50%; 
+    color: black;
+    text-align: center;
+
+    vertical-align: middle;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-decoration: none;
+}
+.statBlack:hover {
     cursor: pointer;
 }
 .option{
@@ -123,6 +152,39 @@ session_start();
     border-radius: 50%;
 }
 </style>
+<?php
+session_start();
+
+if(isset($_POST))
+{
+    echo print_r($_POST);
+}
+if(!isset(($_SESSION['Profile'])))
+{
+    buildScreen();
+    exit();
+}
+//include "../TalentTree/loginScreen.php";
+?>
+<?php
+function buildScreen()
+{
+    echo 
+    '<script>
+    function setPlayer()
+    {
+        val = document.getElementById("player").value;
+        console.log(val);
+    }
+    </script>';
+    $players = ['David', 'Matt'];
+    echo "<select id='player' onchange='setPlayer()' name='nameChoice'>";
+    foreach($players as $player)
+    {
+        echo "<option value=".$player.">".$player."</option>";
+    }
+}
+?>
 <html>
 <head>
 <title>Last Flame
@@ -139,11 +201,11 @@ session_start();
     <canvas id="canvas" class='smoke' style="margin:0; height:100%; width:100%"></canvas>
         <div class='dotBig' style='position:absolute; top: 50%; left: 50%;'>
             <video autoplay muted loop id="flame">
-            <source src="img/fire-effect.mp4" type="video/mp4">
+            <source src="img/fire-effect-trans2.webm" type="video/webm">
             </video>
             <div class='dot' style='position:absolute; top: 50%; left: 50%;'>
                 <div id='option0' class='option optionClose' style='position:absolute; top: 50%; left: 50%;'>
-                    <h1 id='stat0' class='stat' style='position:absolute; top: 50%; left: 50%;'>200</h1>
+                    <h1 id='stat0' class='statBlack' style='position:absolute; top: 50%; left: 50%;'>200</h1>
                 </div>
             </div>
         </div>
