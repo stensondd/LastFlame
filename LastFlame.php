@@ -1,3 +1,18 @@
+<?php
+session_start();
+if(isset($_POST['Profile']) || isset($_SESSION['Profile']))
+{
+    $_SESSION['Profile'] = $_POST['Profile'] ?? $_SESSION['Profile'];
+    echo '<p id="Profile" hidden value="'.$_SESSION['Profile'].'"></p>';
+}
+else
+{
+    session_destroy();
+    header('Location: Login.php');
+    exit();
+}
+?>
+
 <style>
 .dotBig {
     height: 900px;
@@ -46,7 +61,7 @@
     margin-top: -33px;
     margin-left: -33px;
     border-radius: 50%;
-    border: 3px solid rgba(200,160,36,100); 
+    border: 3px solid rgba(160,110,24,100); 
     display: inline-block;
     background-color: rgba(0,0,0,.4);
 }
@@ -57,7 +72,13 @@
     margin-top: -33px;
     margin-left: -33px;
     border-radius: 50%;
-    border: 3px solid rgba(200,160,36,100); 
+    border: 3px solid rgba(160,110,24,100); 
+    display: inline-block;
+    background-color: rgba(0,0,0,.4);
+}
+.nodeSquare {
+    position: absolute;
+    border: 3px solid rgba(160,110,24,100); 
     display: inline-block;
     background-color: rgba(0,0,0,.4);
 }
@@ -112,6 +133,19 @@
 .statBlack:hover {
     cursor: pointer;
 }
+.statLoose {
+    color: lightgray;
+    text-align: center;
+    vertical-align: middle;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    text-decoration: none;
+    margin:10px;
+}
 .option{
     cursor: pointer;
     border-radius: 50%;
@@ -129,7 +163,7 @@
     width:80px;
     margin-top: -50px;
     margin-left: -50px;
-    border: 10px solid rgba(200,160,36,100);
+    border: 10px solid rgba(160,110,24,100);
     /*box-shadow:0 0 0 2px,
     inset 0 0 0 2px;*/
     transition: 0.5s linear
@@ -151,40 +185,10 @@
     position: absolute;
     border-radius: 50%;
 }
+a{
+    text-decoration: none;
+}
 </style>
-<?php
-session_start();
-
-if(isset($_POST))
-{
-    echo print_r($_POST);
-}
-if(!isset(($_SESSION['Profile'])))
-{
-    buildScreen();
-    exit();
-}
-//include "../TalentTree/loginScreen.php";
-?>
-<?php
-function buildScreen()
-{
-    echo 
-    '<script>
-    function setPlayer()
-    {
-        val = document.getElementById("player").value;
-        console.log(val);
-    }
-    </script>';
-    $players = ['David', 'Matt'];
-    echo "<select id='player' onchange='setPlayer()' name='nameChoice'>";
-    foreach($players as $player)
-    {
-        echo "<option value=".$player.">".$player."</option>";
-    }
-}
-?>
 <html>
 <head>
 <title>Last Flame
@@ -193,12 +197,12 @@ function buildScreen()
 <script type="text/javascript">
 </script>
 <html>
-<body style='margin:0px'>
-    <div id="night" style='width:100%; height:100%; background-color: #000;'>
-    <video autoplay muted loop id="fog">
+<body style='margin:0px; overflow: hidden;'>
+    <div id="night" style='width:100%; height:100%; background-color: #000; overflow:hidden;'>
+    <video autoplay muted loop id="fog" style='overflow: hidden'>
     <source src="img/spark-smoke.mp4" type="video/mp4">
     </video>
-    <canvas id="canvas" class='smoke' style="margin:0; height:100%; width:100%"></canvas>
+    <!--<canvas id="canvas" class='smoke' style="margin:0; height:100%; width:100%"></canvas>-->
         <div class='dotBig' style='position:absolute; top: 50%; left: 50%;'>
             <video autoplay muted loop id="flame">
             <source src="img/fire-effect-trans2.webm" type="video/webm">
@@ -209,6 +213,7 @@ function buildScreen()
                 </div>
             </div>
         </div>
+        <div class='nodeSquare'><a href='PlayerDashboard.php'><h1 class='statLoose'>Dashboard</h1></a></div>
     </div>    
 </body>
 </html>

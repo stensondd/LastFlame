@@ -1,0 +1,48 @@
+@font-face {
+/* Talent Title */
+  font-family: 'BoldCn';
+  src: url(fonts/EurostileLTStd-BoldCn.otf);
+}
+@font-face {
+    /*Career Name */
+  font-family: 'BoldEx';
+  src: url(fonts/EurostileLTStd-BoldEx2.otf);
+}
+@font-face {
+    /* Text */
+  font-family: 'Cn';
+  src: url(fonts/EurostileLTStd-Cn.otf);
+}
+@font-face {
+    /* ? */
+  font-family: 'Demi';
+  src: url(fonts/EurostileLTStd-Demi.otf);
+}
+@font-face {
+    /* ? */
+  font-family: 'SymbolsE';
+  src: url(fonts/EotESymbol-Regular-PLUS.otf);
+}
+@font-face {
+    /* ? */
+  font-family: 'SymbolsG';
+  src: url(fonts/GenesysSymbol.otf);
+}
+
+@font-face {
+  /* ? */
+font-family: 'Roboto';
+src: url(fonts/Roboto-Black.ttf);
+}
+
+@font-face {
+  /* ? */
+font-family: 'RobotoLight';
+src: url(fonts/Roboto-Light.ttf);
+}
+
+@font-face {
+  /* ? */
+font-family: 'RobotoCondensed';
+src: url(fonts/RobotoCondensed.ttf);
+}
