@@ -200,7 +200,7 @@ a{
 <body style='margin:0px; overflow: hidden;'>
     <div id="night" style='width:100%; height:100%; background-color: #000; overflow:hidden;'>
     <video autoplay muted loop id="fog" style='overflow: hidden'>
-    <source src="img/spark-smoke.mp4" type="video/mp4">
+    <!--<source src="img/spark-smoke.mp4" type="video/mp4">-->
     </video>
     <!--<canvas id="canvas" class='smoke' style="margin:0; height:100%; width:100%"></canvas>-->
         <div class='dotBig' style='position:absolute; top: 50%; left: 50%;'>

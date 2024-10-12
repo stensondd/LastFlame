@@ -9,6 +9,43 @@
   line-height: 44px;
 }
 
+.skillNumWide {
+  font-size: 22px;
+  font-weight: bold;
+  width:95px;
+  text-align: center;
+  margin: 5px;
+  line-height: 22px;
+}
+
+.skillNum {
+  font-size: 22px;
+  font-weight: bold;
+  width:30px;
+  text-align: center;
+  margin: 5px;
+  line-height: 22px;
+}
+
+.damNum
+{
+  font-size: 22px;
+  font-weight: bold;
+  width:10px;
+  text-align: center;
+  margin: 5px;
+  line-height: 22px;
+}
+
+.skillTitle {
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  width: 95px;
+  margin: 5px;
+  line-height: 22px;
+}
+
 .statTitle {
   font-size: 16px;
   font-weight: bold;
@@ -32,6 +69,14 @@
   overflow-x: hidden;
   border: 6px solid transparent;
   border-image: url('svg/borderStat.svg');
+  border-image-slice: 4% fill
+}
+
+.borderResource {
+  overflow-y: hidden;
+  overflow-x: hidden;
+  border: 12px solid transparent;
+  border-image: url('svg/borderSkill.svg');
   border-image-slice: 4% fill
 }
 /*DELETE*/
@@ -440,6 +485,14 @@ tr > .empty {
 }
 
 .grid-stack-item-content:has(.grid-table){
+  overflow-y: hidden;
+  overflow-x: hidden;
+  border: 15px solid transparent;
+  border-image: url('svg/borderInventory.svg');
+  border-image-slice: 4% fill
+}
+
+.skillTable{
   overflow-y: hidden;
   overflow-x: hidden;
   border: 15px solid transparent;

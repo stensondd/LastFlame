@@ -16,6 +16,19 @@ else
 <link rel="stylesheet" type="text/css" href="font.css">
 <link rel="stylesheet" type="text/css" href="style.css">
 <style>
+.noteText
+{
+  font-size: 22px;
+  font-weight: bold;
+  text-align: left;
+  margin: 5px;
+  line-height: 22px;    
+}
+
+.noteText:hover{
+    cursor: pointer;
+}
+
 .dotBig {
     height: 600px;
     width: 600px;
@@ -141,6 +154,21 @@ else
     text-decoration: none;
     margin:10px;
 }
+.statNum:hover {
+    cursor: pointer;
+}
+.statHead:hover {
+    cursor: pointer;
+}
+.skillNum:hover {
+    cursor: pointer;
+}
+.damNum {
+    margin:0px;
+}
+.damNum:hover {
+    cursor: pointer;
+}
 .option{
     cursor: pointer;
     border-radius: 50%;
@@ -188,6 +216,32 @@ a{
 .statCell{
     padding:10px;
 }
+.statRow{
+    border-color: rgba(0, 69, 183, 0.4);
+    border-top: 1px dotted slategray;
+    border-width: 1px;
+}
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  z-index: 1;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+.highlight {
+    color: grey;
+}
 </style>
 <html>
 <head>
@@ -195,9 +249,162 @@ a{
 </title>
 <script type='text/javascript' src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
 <script type="text/javascript">
+    let editObject = null;
+    function incStat(ev, index)
+    {
+        let mod = 0
+        ev.preventDefault();
+        if(ev.which == 1)
+            mod = 1;
+        else
+            mod = -1; 
+        let statList = document.querySelectorAll('.'+index);
+        console.log(statList);  
+        statList.forEach((stat)=>{
+            stat.innerHTML =  Math.max(parseInt(stat.innerHTML)+mod, 0);
+            if(stat.id.includes('primeskill'))
+            {
+                stat.innerHTML = '+'+stat.innerHTML;
+            }
+            updateDatabase(stat.id, stat.innerHTML); 
+        });
+    }
+    function incWeap(ev, index)
+    {
+        let mod = 0
+        ev.preventDefault();
+        if(ev.which == 1)
+            mod = 1;
+        else
+            mod = -1; 
+        let statList = document.querySelectorAll('.weap'+index);
+        console.log(statList);  
+        statList.forEach((stat)=>{
+            stat.innerHTML = parseInt(stat.innerHTML)+mod;
+        });
+    }
+
+    function nextVal(ev, index)
+    {
+        let weaponName = ['Torch', 'Dagger', 'Sword', 'Mace', 'Spear', 'War-Pick'];
+        let special = ['Burn', 'Bleed', 'Recoil', 'Stagger', 'Hinder', 'Sunder'];
+        let mod = 0;
+
+        if(index == 0)
+            rot = weaponName;
+        else
+            rot = special;
+        ev.preventDefault();
+        if(ev.which == 1)
+            mod = 1;
+        else
+            mod = -1; 
+        let statList = document.querySelectorAll('.weap'+index);
+        console.log(statList);  
+
+        statList.forEach((stat)=>{
+            tate = (rot.indexOf(stat.innerHTML)+1)%rot.length;
+            stat.innerHTML = rot[tate];
+        });
+    }
+    function selectEdit(ev, id)
+    {
+        editObject = document.querySelector('#'+id);
+        editObject.classList.add('highlight');
+        editBox = document.querySelector('#editBox');
+        editBox.value = editObject.innerHTML;
+        editBox.focus();
+    }
+    function makeEdit()
+    {
+        console.log(event.key);
+        editObject.innerHTML = event.target.value;
+    }
+    function exitEdit()
+    {
+        if(event.key == 'Enter')
+        {
+            event.preventDefault();
+            editObject.blur();
+        }
+    }
+    function stopEdit()
+    {
+        editObject.classList.remove('highlight');
+        updateDatabase(editObject.id, editObject.innerHTML);
+    }
+    function updateDatabase(id, val)
+    {
+        <?php
+        echo "playerId = '".$_SESSION['Profile']."'\n";
+        ?>
+        $.ajax(
+        {
+            method: 'POST',
+            url: 'dataInterface.php',
+            data: {
+                playerId: playerId,
+                id: id,
+                val: val,
+            },
+            xhrFields: {
+                withCredentials: true
+            },
+            crossDomain: true,
+            success: function(response)
+            {
+                console.log(response);
+            }
+        });
+    }
+    function updateStat(update)
+    {
+        updateObject = document.querySelector('#'+update.id);
+        updateObject.innerHTML = update.val;
+    }
+    function updateSheet()
+    {
+        <?php
+        echo "playerId = '".$_SESSION['Profile']."'\n";
+        ?>
+        $.ajax(
+        {
+            method: 'POST',
+            url: 'dataInterface.php',
+            data: {
+                playerId: playerId,
+            },
+            xhrFields: {
+                withCredentials: true
+            },
+            crossDomain: true,
+            success: function(response)
+            {
+                stats = JSON.parse(response);
+                stats.forEach((stat) => {
+                    /*if(stat.idStat.includes('weap'))
+                    {
+                        weapSplit = stat.idStat.split('-');
+                        if(!isset(document.querySelector('#'+weapSplit[0])))
+                        {
+                            addWeaponRow();
+                        }
+                    }*/
+                    updateObject = document.querySelector('#'+stat.idStat);
+                    updateObject.innerHTML = stat.statValue;
+                    
+                });
+                console.log(response);
+            }
+        });
+    }
+    function addWeaponRow()
+    {
+
+    }
 </script>
 <html>
-<body style='margin:0px; overflow: hidden;'>
+<body onload='updateSheet()' style='margin:0px; overflow: hidden;' oncontextmenu='return false;'>
     <div id="night" style='width:100%; height:100%; background-color: #000; overflow:hidden;'>
     <video autoplay muted loop id="fog" style='overflow: hidden'>
     <source src="img/spark-smoke.mp4" type="video/mp4">
@@ -209,24 +416,113 @@ a{
             </video>
             <div class='dot' style='position:absolute; top: 50%; left: 50%;'>
                 <div id='option0' class='option optionClose' style='position:absolute; top: 50%; left: 50%;'>
-                    <h1 id='stat0' class='statBlack' style='position:absolute; top: 50%; left: 50%;'>200</h1>
+                    <h1 id='statMain' class='statBlack statMain' onmousedown='incStat(event, "statMain")' style='position:absolute; top: 50%; left: 50%;'>1</h1>
                 </div>
             </div>
         </div>
         <table id='statRow' style='position: absolute; top:160px; left: 320px; width: 20px; height: 20px;'>
             <tr>
-                
                     <?php
                     $statList = ['VITALITY', 'ENDURANCE', 'FINESSE', 'INSTINCT', 'WIT', 'RESOLVE'];
-                    foreach($statList as $stat)
+                    foreach($statList as $statInd => $stat)
                     {
-                        echo "<td class='statCell'><table class='borderStat'><tr><td><h1 class='statNum'>0</h1></td></tr><tr><td><h1 class='statHead'>".$stat."</h1></td></tr></table></td>";
+                        $statClass = 'stat'.$statInd;
+                        echo "<td class='statCell'><table onmousedown='incStat(event, \"".$statClass."\")' class='borderStat'><tr><td><h1 id='prime".$statClass."' class='".$statClass." statNum'>0</h1></td></tr><tr><td><h1 class='statHead'>".$stat."</h1></td></tr></table></td>";
                     }
                     ?>
             </tr>
         </table>
-        <div class='nodeSquare'><a href='LastFlame.php'><h1 class='statLoose'>Bonfire</h1></a></div>
-    </div>    
+        <table id='skillList' class='skillTable' style='position: absolute; top:300px; left: 330px; width:400px; height: 300px;'>
+            <tbody>
+            <?php
+                    $statList = ['VITALITY', 'ENDURANCE', 'FINESSE', 'INSTINCT', 'WIT', 'RESOLVE'];
+                    $skillList = [
+                        'Attack'=>[0, 2], 
+                        'Block'=>[1, 2], 
+                        'Command'=>[0, 4], 
+                        'Convince'=>[1, 4],
+                        'Discover'=>[3, 5],
+                        'Dodge'=>[1, 3],
+                        'Exert'=>[0, 1],
+                        'Focus'=>[1, 5],
+                        'Manipulate'=>[2, 4],
+                        'Parry'=>[2, 5],
+                        'Scheme'=>[3, 4],
+                        'Sense'=>[0, 3],
+                        'Sneak'=>[2, 3],
+                        'Strive'=>[0, 5]
+                    ];
+                    $index = 0;
+                    echo "<tr><th><h2 class='skillTitle' style='text-align:left'>Skill</h2></td><td><h2 class='skillTitle'>First</h2></td><td><h2 class='skillTitle'>Second</h2></td><td><h2 class='skillTitle'>Bonus</h2></td></tr>";
+                    foreach($skillList as $skillInd => $skill)
+                    {
+                        $skillClass = 'skill'.$index;
+                        echo "<tr class='skillLine'><td onmousedown='incStat(event, \"".$skillClass."\")'><h2 class='statHead' style='text-align:left' >".$skillInd."</h2></td><td><h2 id='".$skillClass."-".$skill[0]."' class='stat".$skill[0]." skillNumWide'>0</h2></td><td><h2 id='".$skillClass."-".$skill[1]."' class='stat".$skill[1]." skillNumWide'>0</h2></td><td><h2 id='prime".$skillClass."' class='".$skillClass." skillNumWide'>+0</h2></td></tr>";
+                        $index++;
+                    }
+                ?>
+            </tbody>
+        </table>
+        <table id='statRow' style='position: absolute; top:360px; left: 100px; width: 20px; height: 20px;'>
+            <?php
+            $statList = [['BURN', 'BLAZE', 7, 6], ['STAMINA', 'MAX', 1, 10], ['BULWARK', 'MAX', 0, 0]];
+            foreach($statList as $statInd => $stat)
+            {
+                $statClass = 'resource'.$statInd;
+                $statMaxClass = 'resourceMax'.$statInd;
+                echo "<tr class='statCell'><td><table class='borderResource'><tr><td onmousedown='incStat(event, \"".$statClass."\")'><h1 id='prime".$statClass."' class='".$statClass." statNum'>0</h1></td><td onmousedown='incStat(event, \"".$statMaxClass."\")'><h1 id='prime".$statMaxClass."' class='".$statMaxClass." statNum stat".$stat[2]."'>".$stat[3]."</h1></td></tr><tr><td><h1 class='statHead'>".$stat[0]."</h1></td><td><h1 class='statHead'>".$stat[1]."</h1></td></tr></table></td></tr>";
+            }
+            ?>
+        </table>
+        <table id='weaponTable' style='position: absolute; top:300px; left: 820px; width: 20px; height: 20px;'>
+            <?php
+            $weapList = [
+                [['NAME', 'Torch'], ['DAMAGE', 0], ['HEFT', 0], ['REACH', 0], ['SPECIAL', 'Burn']],
+                [['NAME', 'Torch'], ['DAMAGE', 0], ['HEFT', 0], ['REACH', 0], ['SPECIAL', 'Burn']],
+                [['NAME', 'Torch'], ['DAMAGE', 0], ['HEFT', 0], ['REACH', 0], ['SPECIAL', 'Burn']]];
+            echo "<tr class='statCell'><td><table class='borderResource'><tr>";
+            $top = "<tr>";
+            $bot = "<tr>";
+            $topFirst = true;
+            foreach($weapList as $weaponInd => $weapon)
+            {
+                foreach($weapon as $subInd => $weap)
+                {
+                    $weapInd = 'weap'.$weaponInd.'-'.$subInd;
+                    $weaponClassNum = $weapInd.'Num';
+                    $weaponClassDie = $weapInd.'Die';
+                    $top= $top."<td><h1 style='width:100%' class='statHead'>".$weap[0]."</h1></td>";
+                    if($weap[0] == 'DAMAGE'){
+                        $bot= $bot."<td><table><tr id='weap".$weaponInd."'><td><h1 id='prime".$weaponClassNum."' class='".$weaponClassNum." damNum' onmousedown='incStat(event, \"".($weaponClassNum)."\")'>".$weap[1]."</h1></td><td><h1 class='damNum'>d</h1></td><td><h1 id='prime".$weaponClassDie."' class='".$weaponClassDie." damNum' onmousedown='incStat(event, \"".($weaponClassDie)."\")'>".$weap[1]."</h1></td></tr></table></td>";
+                    }
+                    else
+                    {
+                        if(($weap[0] == 'NAME') || ($weap[0] == 'SPECIAL'))
+                            $bot= $bot."<td onmouseup='selectEdit(event, \"prime".$weapInd."\")'><h1 id='prime".$weapInd."' style='width:100px; ' class='".$weapInd." skillNum'>".$weap[1]."</h1></td>";
+                        else
+                            $bot= $bot."<td onmousedown='incStat(event, \"".$weapInd."\")'><h1 id='prime".$weapInd."' style='width:100%; ' class='".$weapInd." skillNum'>".$weap[1]."</h1></td>";
+                    }
+                }
+                if($topFirst)
+                    echo $top;
+                else
+                    echo "</tr>";
+                $top = null;
+                $topFirst = false;
+                echo $bot;
+                $bot = null;
+            }
+            echo "</tr><tr><td colspan='5'><h1 id='".$weaponInd."' onclick='addWeaponRow()' class='noteText' style='text-align: center; color:grey'>Add Row</h1></td></tr></table></td>";
+            ?>
+        </table>
+
+        <div id='weaponTable' class='borderResource' style='position: absolute; top:303px; left: 1220px; width: 360px;' onmouseup='selectEdit(event, "note")'>
+            <h1 class='statHead'>Notes</h1>    
+            <h1 id='note' class='note noteText'>Notes</h1>
+        </div>
+        <!--<div class='nodeSquare'><a href='LastFlame.php'><h1 class='statLoose'>Bonfire</h1></a></div>-->
+    </div>
+        <textarea id='editBox' name='editBox' onkeyup='exitEdit()' oninput='makeEdit()' onfocusout='stopEdit()'></input>
 </body>
 </html>
 <script>

@@ -2,17 +2,17 @@
 session_start();
 if(isset($_SESSION['Profile']))
 {
-    header('Location: LastFlame.php');
+    header('Location: PlayerDashboard.php');
 }
 else
 {
-    echo '<form id="playerForm" action="LastFlame.php" method="post" target="_self">';
-    $players = ['David', 'Matt'];
+    echo '<form id="playerForm" action="PlayerDashboard.php" method="post" target="_self">';
+    $players = ['Matt', 'Chad', 'Drew', 'Isaac'];
     echo "<select id='profile' onchange='setPlayer()' name='Profile'>";
-    echo "<option value="">""</option>";
-    foreach($players as $player)
+    echo "<option value=''></option>";
+    foreach($players as $ind => $player)
     {
-        echo "<option value=".$player.">".$player."</option>";
+        echo "<option value=".$ind.">".$player."</option>";
     }
 }
 ?>
