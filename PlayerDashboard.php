@@ -18,11 +18,11 @@ else
 <style>
 .noteText
 {
-  font-size: 22px;
-  font-weight: bold;
+  font-size: 16px;
   text-align: left;
   margin: 5px;
-  line-height: 22px;    
+  line-height: 16px;    
+  width: 94%;
 }
 
 .noteText:hover{
@@ -242,6 +242,13 @@ a{
 .highlight {
     color: grey;
 }
+.operation {
+    border: 1px solid #718191;
+    border-radius: 4px;
+}
+.highlight {
+    color: #A06E18;
+}
 </style>
 <html>
 <head>
@@ -269,56 +276,9 @@ a{
             updateDatabase(stat.id, stat.innerHTML); 
         });
     }
-    function incWeap(ev, index)
-    {
-        let mod = 0
-        ev.preventDefault();
-        if(ev.which == 1)
-            mod = 1;
-        else
-            mod = -1; 
-        let statList = document.querySelectorAll('.weap'+index);
-        console.log(statList);  
-        statList.forEach((stat)=>{
-            stat.innerHTML = parseInt(stat.innerHTML)+mod;
-        });
-    }
-
-    function nextVal(ev, index)
-    {
-        let weaponName = ['Torch', 'Dagger', 'Sword', 'Mace', 'Spear', 'War-Pick'];
-        let special = ['Burn', 'Bleed', 'Recoil', 'Stagger', 'Hinder', 'Sunder'];
-        let mod = 0;
-
-        if(index == 0)
-            rot = weaponName;
-        else
-            rot = special;
-        ev.preventDefault();
-        if(ev.which == 1)
-            mod = 1;
-        else
-            mod = -1; 
-        let statList = document.querySelectorAll('.weap'+index);
-        console.log(statList);  
-
-        statList.forEach((stat)=>{
-            tate = (rot.indexOf(stat.innerHTML)+1)%rot.length;
-            stat.innerHTML = rot[tate];
-        });
-    }
-    function selectEdit(ev, id)
-    {
-        editObject = document.querySelector('#'+id);
-        editObject.classList.add('highlight');
-        editBox = document.querySelector('#editBox');
-        editBox.value = editObject.innerHTML;
-        editBox.focus();
-    }
     function makeEdit()
     {
-        console.log(event.key);
-        editObject.innerHTML = event.target.value;
+        updateDatabase(event.target.id, event.target.innerHTML);
     }
     function exitEdit()
     {
@@ -327,11 +287,6 @@ a{
             event.preventDefault();
             editObject.blur();
         }
-    }
-    function stopEdit()
-    {
-        editObject.classList.remove('highlight');
-        updateDatabase(editObject.id, editObject.innerHTML);
     }
     function updateDatabase(id, val)
     {
@@ -357,10 +312,19 @@ a{
             }
         });
     }
-    function updateStat(update)
+    function highlightStat(update)
     {
-        updateObject = document.querySelector('#'+update.id);
-        updateObject.innerHTML = update.val;
+        let statList = document.querySelectorAll('.'+update);
+        statList.forEach((stat)=>{
+            stat.classList.add('highlight');
+        });
+    }
+    function highlightClear(update)
+    {
+        let statList = document.querySelectorAll('.'+update);
+        statList.forEach((stat)=>{
+            stat.classList.remove('highlight');
+        });
     }
     function updateSheet()
     {
@@ -402,9 +366,20 @@ a{
     {
 
     }
+    function fireUpdate(type)
+    {
+        fire = document.querySelector('#statMain');
+        change = document.querySelector('#fireInput');
+        if(type == "ADD")
+            fire.innerHTML = parseInt(fire.innerHTML)+parseInt(change.innerHTML);
+        else
+            fire.innerHTML = parseInt(fire.innerHTML)-parseInt(change.innerHTML);
+        change.innerHTML = 0;
+        torrent();
+    }
 </script>
 <html>
-<body onload='updateSheet()' style='margin:0px; overflow: hidden;' oncontextmenu='return false;'>
+<body onload='updateSheet()' style='margin:0px; overflow: hidden; user-select: none; -webkit-user-select: none;' oncontextmenu='return false;'>
     <div id="night" style='width:100%; height:100%; background-color: #000; overflow:hidden;'>
     <video autoplay muted loop id="fog" style='overflow: hidden'>
     <source src="img/spark-smoke.mp4" type="video/mp4">
@@ -416,7 +391,7 @@ a{
             </video>
             <div class='dot' style='position:absolute; top: 50%; left: 50%;'>
                 <div id='option0' class='option optionClose' style='position:absolute; top: 50%; left: 50%;'>
-                    <h1 id='statMain' class='statBlack statMain' onmousedown='incStat(event, "statMain")' style='position:absolute; top: 50%; left: 50%;'>1</h1>
+                    <h1 id='statMain' class='statBlack statMain' onmousedown='incStat(event, "statMain"); torrent();' style='position:absolute; top: 50%; left: 50%;'>1</h1>
                 </div>
             </div>
         </div>
@@ -427,7 +402,7 @@ a{
                     foreach($statList as $statInd => $stat)
                     {
                         $statClass = 'stat'.$statInd;
-                        echo "<td class='statCell'><table onmousedown='incStat(event, \"".$statClass."\")' class='borderStat'><tr><td><h1 id='prime".$statClass."' class='".$statClass." statNum'>0</h1></td></tr><tr><td><h1 class='statHead'>".$stat."</h1></td></tr></table></td>";
+                        echo "<td class='statCell'><table onmousedown='incStat(event, \"".$statClass."\")' onmouseenter='highlightStat(\"".$statClass."\")' onmouseleave='highlightClear(\"".$statClass."\")' class='borderStat'><tr><td><h1 id='prime".$statClass."' class='".$statClass." statNum'>0</h1></td></tr><tr><td><h1 class='statHead'>".$stat."</h1></td></tr></table></td>";
                     }
                     ?>
             </tr>
@@ -465,7 +440,12 @@ a{
         </table>
         <table id='statRow' style='position: absolute; top:360px; left: 100px; width: 20px; height: 20px;'>
             <?php
-            $statList = [['BURN', 'BLAZE', 7, 6], ['STAMINA', 'MAX', 1, 10], ['BULWARK', 'MAX', 0, 0]];
+            echo "<tr class='statCell'><td><table style='width:100%' class='borderResource'><tr>
+            <td style='width:40px' rowspan='2'><h1 contenteditable id='fireInput' class='statNum operation'>0</h1></td><td>
+            <h1 onclick='fireUpdate(\"ADD\")' class='statHead operation'>ADD</h1></td></tr><tr><td>
+            <h1 onclick='fireUpdate(\"REMOVE\")' class='statHead operation'>REMOVE</h1>
+            </td></tr></table></td></tr>";
+            $statList = [['BURN', 'BLAZE', 7, 5], ['STAMINA', 'MAX', 1, 10], ['BULWARK', 'MAX', 0, 0]];
             foreach($statList as $statInd => $stat)
             {
                 $statClass = 'resource'.$statInd;
@@ -498,7 +478,7 @@ a{
                     else
                     {
                         if(($weap[0] == 'NAME') || ($weap[0] == 'SPECIAL'))
-                            $bot= $bot."<td onmouseup='selectEdit(event, \"prime".$weapInd."\")'><h1 id='prime".$weapInd."' style='width:100px; ' class='".$weapInd." skillNum'>".$weap[1]."</h1></td>";
+                            $bot= $bot."<td onmouseup='edit(event, \"prime".$weapInd."\")'><h1 contenteditable id='prime".$weapInd."' style='width:100px; ' class='".$weapInd." skillNum'  onkeyup='exitEdit()' oninput='makeEdit()'>".$weap[1]."</h1></td>";
                         else
                             $bot= $bot."<td onmousedown='incStat(event, \"".$weapInd."\")'><h1 id='prime".$weapInd."' style='width:100%; ' class='".$weapInd." skillNum'>".$weap[1]."</h1></td>";
                     }
@@ -516,14 +496,37 @@ a{
             ?>
         </table>
 
-        <div id='weaponTable' class='borderResource' style='position: absolute; top:303px; left: 1220px; width: 360px;' onmouseup='selectEdit(event, "note")'>
+        <div id='noteTable' class='borderResource' style='position: absolute; top:523px; left: 820px; width: 760px; height: 324px' onkeyup='exitEdit()' oninput='makeEdit()'>
             <h1 class='statHead'>Notes</h1>    
-            <h1 id='note' class='note noteText'>Notes</h1>
+            <h1 id='note' class='note noteText' contenteditable>Notes</h1>
+        </div>
+
+        <div id='abilityTable' class='borderResource' style='position: absolute; top:303px; left: 1220px; width: 360px; height: 175px'>
+            <h1 class='statHead'>Abilities</h1>   
+            <p id='ability' class='noteText'><b>Burst</b> - Increase <b>Burn</b> level up to your <b>Blaze</b>. Gain <b>Stamina</b> equal to: Change in <b>Burn</b> level + <b class='burnDie'>Burn Die</b></p>
         </div>
         <!--<div class='nodeSquare'><a href='LastFlame.php'><h1 class='statLoose'>Bonfire</h1></a></div>-->
     </div>
-        <textarea id='editBox' name='editBox' onkeyup='exitEdit()' oninput='makeEdit()' onfocusout='stopEdit()'></input>
 </body>
 </html>
 <script>
+    function torrent()
+    {
+        var flameWidth = parseInt(document.getElementById("statMain").innerHTML)*15+200;
+        var flameHeight = parseInt(document.getElementById("statMain").innerHTML)*15+200;
+        document.getElementById("flame").style.height = flameHeight+"px";
+        document.getElementById("flame").style.width = flameWidth+"px ";
+        document.getElementById("flame").style.marginTop = -flameHeight/2+"px";
+        document.getElementById("flame").style.marginLeft = -flameWidth/2+"px ";
+        if(parseInt(document.getElementById("statMain").innerHTML) < 21){
+            document.getElementById("flame").style.filter = 'hue-rotate('+(120+parseInt(document.getElementById("statMain").innerHTML)*12)+'deg) ';
+            document.getElementById("flame").style.webkitFilter  = 'hue-rotate('+(120+parseInt(document.getElementById("statMain").innerHTML)*12)+'deg) grayscale('+(1-(parseInt(document.getElementById("statMain").innerHTML)/7))+')';
+        }
+        else
+        {
+            document.getElementById("flame").style.filter = 'hue-rotate(0deg)';
+            document.getElementById("flame").style.webkitFilter  = 'hue-rotate(0deg)';
+        }
+    }
+    torrent();
 </script>
