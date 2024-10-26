@@ -501,9 +501,14 @@ a{
             <h1 id='note' class='note noteText' contenteditable>Notes</h1>
         </div>
 
+        <div id='nameTable' class='borderResource' style='position: absolute; top:176px; left: 1032px; width: 150px; height: 32px' onkeyup='exitEdit()' oninput='makeEdit()'>  
+            <h1 id='name' class='note skillTitle' contenteditable>Name</h1>
+        </div>
+
         <div id='abilityTable' class='borderResource' style='position: absolute; top:303px; left: 1220px; width: 360px; height: 175px'>
             <h1 class='statHead'>Abilities</h1>   
-            <p id='ability' class='noteText'><b>Burst</b> - Increase <b>Burn</b> level up to your <b>Blaze</b>. Gain <b>Stamina</b> equal to: Change in <b>Burn</b> level + <b class='burnDie'>Burn Die</b></p>
+            <p id='ability0' class='noteText'><b>Burst</b> - Increase <b>Burn</b> level up to your <b>Blaze</b>. Gain <b>Stamina</b> equal to: Change in <b>Burn</b> level + <b class='burnDie'>Burn Die</b></p>
+            <p id='ability1' class='noteText'></p>
         </div>
         <!--<div class='nodeSquare'><a href='LastFlame.php'><h1 class='statLoose'>Bonfire</h1></a></div>-->
     </div>
