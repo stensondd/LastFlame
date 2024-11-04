@@ -4,7 +4,7 @@
     document.body.clientHeight;
     
     //radius of orbit
-    const orbit = [150, 230, 340, 460];
+    const orbit = [150, 300, 440, 460];
     var flameWidth = .1*1920;
     var widthChange = 1920/50;
     var flameHeight = .1*1080;
@@ -12,15 +12,16 @@
 
     stat = [6];
     //[Number, SplitNumber, Nudge]
-    const constellation = [[6, 12, 0, 0], [6, 12, .5, 1], [12, 12, 0, 2], [12, 12, .5, 3]]
+    const constellation = [[6, 12, 0, 0], [12, 12, 0, 1], [12, 12, .5, 2]]//, [12, 12, .5, 3]]
     //const constNames = [['Vit', 'End', 'Fin', 'Ins', 'Wit', 'Res'], [], []]
-    const constNames = [['Vitality', 'Endurance', 'Finesse', 'Instinct', 'Wit', 'Resolve'], [], [], []]
+    const constCost = [30, 50, 100];
+    const constNames = [['Sword', 'Coin', 'Scepter', 'Wand', 'Compass', 'Cup'], ['Duel', 'Accolade', 'Patron', 'Tithe', 'Court', 'Ritual', 'Spell', 'Mystery', 'Discovery', 'Journey', 'Tryst', 'Plot'], [], []]
     star = [];
     circle = [];
     stat = [];
     galaxy = [];
     var splitPos = 0;
-    function nursery(constell, name, cluster)
+    function nursery(constell, name, cluster, cost)
     {
         circle[cluster] = [];
         star[cluster] = [];
@@ -37,24 +38,27 @@
             
             circle[cluster][stell] = document.createElement('div');
             circle[cluster][stell].classList.add('node')
+            circle[cluster][stell].id = 'Node'+cluster+'-'+stell
             circle[cluster][stell].style.left = width/2+(orbit[constell[3]]*Math.sin(splitPos));
             circle[cluster][stell].style.top = height/2+(orbit[constell[3]]*Math.cos(splitPos)); 
             circle[cluster][stell].addEventListener("click", (e) =>
             {
-                nova(stell);
+                nova();
             })
             stat[stell] = document.createElement('h1');
-            stat[stell].innerHTML = '10';
+            stat[stell].innerHTML = cost;
             stat[stell].classList.add('stat');
             stat[stell].style.left = '50%';
             stat[stell].style.top = '50%';
             
             title = document.createElement('div');
+            title.id = name[stell];
             title.innerHTML = name[stell] ?? '';
             title.style.textAlign = 'center';
             title.style.display = 'flex';
             title.style.justifyContent = 'center';
             title.style.marginTop = -0;  
+            title.style.color = 'lightgray';
 
             stat[stell].appendChild(title);
             circle[cluster][stell].appendChild(stat[stell]);
@@ -64,15 +68,19 @@
         return [star, circle];
     }
 
-    function nova(stellarNum)
+    function nova()
     {
-        star[stellarNum].classList.remove('hidden');
+        node = event.target.closest('.node');
+        //node.innerHTML = '';
+        $(node).find('.stat').first()[0].style.color = 'rgba(0,0,0,0)';
+        node.style.backgroundColor = 'rgba(160,110,24,.6)';
+        updateList($(node).find('div').first()[0].innerHTML)
     }
     function nebula()
     {
         night = document.getElementById('night');
         for(var cluster = 0; cluster < constellation.length; cluster++)
-            galaxy[cluster] = nursery(constellation[cluster], constNames[cluster], cluster);
+            galaxy[cluster] = nursery(constellation[cluster], constNames[cluster], cluster, constCost[cluster]);
     }
     function shrink()
     {
@@ -90,7 +98,7 @@
         var ele = document.getElementsByClassName("option")[num];
         ele.classList.remove('optionClose');
         ele.classList.add('optionExpand');
-        buttonList();
+        //buttonList();
     }
     function reduce(num)
     {
@@ -130,7 +138,7 @@
     {
         shrink();
     });
-    document.getElementById('stat0').addEventListener('mouseover', function()
+    document.getElementById('statMain').addEventListener('mouseover', function()
     {
         expand(0);
     });
@@ -138,3 +146,11 @@
     {
         reduce(0);
     });
+    function updateList(value)
+    {
+        list = JSON.parse(document.querySelector('#ability').innerHTML);
+        list.push(value);
+        document.querySelector('#ability').innerHTML = JSON.stringify(list);
+        updateDatabase('ability', JSON.stringify(list));
+        console.log(value);
+    } 

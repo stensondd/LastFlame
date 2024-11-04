@@ -22,7 +22,7 @@ else
   text-align: left;
   margin: 5px;
   line-height: 16px;    
-  width: 94%;
+  width: 100%;
 }
 
 .noteText:hover{
@@ -344,6 +344,7 @@ a{
             crossDomain: true,
             success: function(response)
             {
+                setAbilities();
                 stats = JSON.parse(response);
                 stats.forEach((stat) => {
                     /*if(stat.idStat.includes('weap'))
@@ -357,7 +358,9 @@ a{
                     updateObject = document.querySelector('#'+stat.idStat);
                     updateObject.innerHTML = stat.statValue;
                     
-                });
+                });                
+                torrent();
+                setAbilities();
                 console.log(response);
             }
         });
@@ -425,7 +428,8 @@ a{
                         'Scheme'=>[3, 4],
                         'Sense'=>[0, 3],
                         'Sneak'=>[2, 3],
-                        'Strive'=>[0, 5]
+                        'Strive'=>[0, 5],
+                        'Logic'=>[4, 5]
                     ];
                     $index = 0;
                     echo "<tr><th><h2 class='skillTitle' style='text-align:left'>Skill</h2></td><td><h2 class='skillTitle'>First</h2></td><td><h2 class='skillTitle'>Second</h2></td><td><h2 class='skillTitle'>Bonus</h2></td></tr>";
@@ -507,9 +511,11 @@ a{
 
         <div id='abilityTable' class='borderResource' style='position: absolute; top:303px; left: 1220px; width: 360px; height: 175px'>
             <h1 class='statHead'>Abilities</h1>   
-            <p id='ability0' class='noteText'><b>Burst</b> - Increase <b>Burn</b> level up to your <b>Blaze</b>. Gain <b>Stamina</b> equal to: Change in <b>Burn</b> level + <b class='burnDie'>Burn Die</b></p>
-            <p id='ability1' class='noteText'></p>
+            <p id='abilityBase' class='noteText'><b>Burst</b> - Increase <b>Burn</b> level up to your <b>Blaze</b>. Gain <b>Stamina</b> equal to: Change in <b>Burn</b> level + <b class='burnDie'>Burn Die</b></p>
+            <div id='abilityAdd'></div>
+            <a href='LastFlame.php' style='width:100%; text-align:center; position:absolute; bottom:5px'><h1 id='".$weaponInd."' class='noteText' style='text-align: center; color:grey'>Add Abilities</h1></a>
         </div>
+        <div id=ability style='display:hidden;'>["Coin", "Scepter"]</div>
         <!--<div class='nodeSquare'><a href='LastFlame.php'><h1 class='statLoose'>Bonfire</h1></a></div>-->
     </div>
 </body>
@@ -533,5 +539,26 @@ a{
             document.getElementById("flame").style.webkitFilter  = 'hue-rotate(0deg)';
         }
     }
-    torrent();
+    function setAbilities()
+    {
+        abilityText = {
+            'Coin':'<b>Coin</b> Add Bulwark equal to Change in Burn level + Burn Die, this may exceed your Bulwark maximum. After an attack resolves within your melee range, deal damage to the attacking enemy equal to your remaining Bulwark.',
+            'Compass':'<b>Compass</b> Disappear in a cloud of smoke moving squares equal to change plus burn dice even through enemies and obstacles. If you use this ability to become adjacent to an enemy you may be considered engaged without expending stamina to overcome their reach. If you become hidden due to this ability, you may gain your burn die as a bonus to damage on your next attack.',
+            'Cup':'<b>Cup</b> Attach a flaming tether to a number of points equal to shift within 5 + Burn Die squares. You may retract this tethers at anytime on your turn while it remain attached, bringing you to the point or an object to you.',
+            'Scepter':'<b>Scepter</b> Allies up to (Burn Change) gain a bonus from one of three commands\:\nOnslaught - Add Burn Die to attack rolls\nBrace -  Add Burn Die to defense rolls\nCharge - Add Burn Die as free movement.',
+            'Sword':'<b>Sword</b> Add Burn Die to your Attack roll. On a successful hit inflict both damage and weapon quality. On an Overwhelming success double your damage dice and ignore the enemy\'s Bulwark.',
+            'Wand':'<b>Wand</b> Choose Facets up to (Burn Change) Choose a tile within 5 squares to inflict one of three effects:\nConflagrate: [Exert] - Create a 1x1 pillar of fire dealing damage to enemies within or passing through equal to burn die.\nCurse: [Focus] - On a successful attack increase a malus on an enemy once, twice for overwhelming success.\nConfound: [Manipulate] - Smoke clouds a 3x3 area adding sight malus equal to Burn Dice.\nArea: Increase size of effect by 2 squares on one side.\nRange: Increase range by 10 squares.\nMaintain: Increasing skill checks allow the effect to persist.',
+        }
+        var abilityList = JSON.parse(document.querySelector('#ability').innerHTML);
+        var abilityTable = document.querySelector('#abilityAdd');
+        abilityList.forEach((ability) => {
+            abilityLine = document.createElement('div');
+            abilityLine.classList.add('noteText');
+            abilityLine.innerHTML = abilityText[ability];
+            abilityTable.appendChild(abilityLine)
+            /*node = document.querySelector('#'+ability).closest('.node');
+            $(node).find('.stat').first()[0].style.color = 'rgba(0,0,0,0)';
+            node.style.backgroundColor = 'rgba(160,110,24,.6)';*/
+        });
+    }
 </script>
